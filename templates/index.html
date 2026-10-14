@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Speech Emotion Recognition</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 16px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f5eaff);
+            color: #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 620px;
+            background: white;
+            padding: 35px;
+            border-radius: 22px;
+            box-shadow: 0 12px 40px rgba(50, 45, 100, 0.12);
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            border-radius: 18px;
+            background: #e0e7ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #3730a3;
+            font-size: 29px;
+            margin: 0 0 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            line-height: 1.7;
+            margin: 0 0 30px;
+        }
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 14px;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+        }
+
+        .file-help {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .audio-box {
+            display: none;
+            margin-top: 18px;
+            padding: 16px;
+            background: #f8faff;
+            border: 1px solid #e0e7ff;
+            border-radius: 12px;
+        }
+
+        .audio-title {
+            font-weight: bold;
+            margin: 0 0 12px;
+            color: #3730a3;
+        }
+
+        audio {
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .analyze-button {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .analyze-button:hover {
+            background: #3730a3;
+        }
+
+        .analyze-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .reset-button {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .reset-button:hover {
+            background: #d1d5db;
+        }
+
+        .result {
+            margin-top: 28px;
+            padding: 25px 18px;
+            border-radius: 15px;
+            background: #eef2ff;
+            border: 1px solid #dbe4ff;
+            text-align: center;
+        }
+
+        .result h2 {
+            margin: 0 0 20px;
+            color: #3730a3;
+            font-size: 22px;
+        }
+
+        .result-label {
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .emotion {
+            color: #4338ca;
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: capitalize;
+            margin-bottom: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .confidence {
+            display: inline-block;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 30px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 14px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.7;
+            margin: 24px 0 0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 18px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .emotion {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <div class="icon" aria-hidden="true">🎙️</div>
+
+        <h1>Speech Emotion Recognition</h1>
+
+        <p class="subtitle">
+            Discover the emotion expressed in a speech recording
+            using our AI-powered CNN model.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="section">
+                <label for="audio">Upload your speech recording</label>
+
+                <input
+                    type="file"
+                    id="audio"
+                    name="audio"
+                    accept=".wav,audio/wav"
+                    required
+                >
+
+                <p class="file-help">
+                    Supported format: WAV audio files
+                </p>
+
+                <div class="audio-box" id="audio-box">
+                    <p class="audio-title">Listen to your recording</p>
+                    <audio id="audio-player" controls></audio>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button
+                    type="submit"
+                    class="analyze-button"
+                    id="analyze-button"
+                    disabled
+                >
+                    Analyze Emotion
+                </button>
+
+                <button
+                    type="button"
+                    class="reset-button"
+                    id="reset-button"
+                >
+                    Reset
+                </button>
+            </div>
+
+        </form>
+
+        {% if emotion %}
+        <section class="result" aria-live="polite">
+            <h2>Prediction Result</h2>
+
+            <p class="result-label">Predicted emotion</p>
+
+            <div class="emotion">{{ emotion }}</div>
+
+            <div class="confidence">
+                Confidence: {{ "%.2f"|format(confidence) }}%
+            </div>
+        </section>
+        {% endif %}
+
+        {% if error %}
+        <div class="error" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <p class="footer">
+            Powered by a CNN trained on MFCC audio features.<br>
+            Predictions are estimates and may not always be correct.
+        </p>
+
+    </main>
+
+    <script>
+        const fileInput = document.getElementById("audio");
+        const audioBox = document.getElementById("audio-box");
+        const audioPlayer = document.getElementById("audio-player");
+        const analyzeButton = document.getElementById("analyze-button");
+        const resetButton = document.getElementById("reset-button");
+
+        let currentAudioURL = null;
+
+        fileInput.addEventListener("change", function () {
+            const file = fileInput.files[0];
+
+            audioBox.style.display = "none";
+            audioPlayer.pause();
+            audioPlayer.removeAttribute("src");
+            audioPlayer.load();
+            analyzeButton.disabled = true;
+
+            if (currentAudioURL) {
+                URL.revokeObjectURL(currentAudioURL);
+                currentAudioURL = null;
+            }
+
+            if (!file) {
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith(".wav")) {
+                alert("Please select a WAV audio file.");
+                fileInput.value = "";
+                return;
+            }
+
+            currentAudioURL = URL.createObjectURL(file);
+            audioPlayer.src = currentAudioURL;
+
+            audioBox.style.display = "block";
+            analyzeButton.disabled = false;
+        });
+
+        resetButton.addEventListener("click", function () {
+            window.location.href = "/";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+
+# IDE settings
+.vscode/
+
+# Dataset and extracted features
+dataset/
+
+# Training outputs
+runs/
